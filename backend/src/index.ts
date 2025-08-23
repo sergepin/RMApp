@@ -29,7 +29,7 @@ async function startServer(){
             await sequelize.authenticate();
             console.log("Connected to DB");
         }catch{
-            console.error('Error connecting DB: ', error)
+            console.error('Error connecting DB: ', Error)
         }
 
         app.listen(4000, () =>{
