@@ -1,7 +1,7 @@
-import  { gql }  from 'graphql-tag'
+import { gql } from "graphql-tag";
 
 const typeDefs = gql`
-    type Character {
+  type Character {
     id: ID!
     name: String!
     species: String
@@ -9,12 +9,19 @@ const typeDefs = gql`
     gender: String
     origin: String
     image: String
-    }
+  }
 
-    type Query {
-    characters: [Character]
+  type Query {
+    characters(
+      name: String
+      status: String
+      species: String
+      gender: String
+      origin: String
+    ): [Character]
+
     character(id: ID!): Character
-    }
-`
+  }
+`;
 
-export default typeDefs
+export default typeDefs;
