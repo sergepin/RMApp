@@ -1,7 +1,9 @@
 import { Op } from 'sequelize'
 import Character from '../models/Character'
+import { timing } from '../decorators/timing'
 
 class Resolvers {
+    @timing
     static async characters(_: any, args: any) {
         const filters: any = {};
 
@@ -24,6 +26,7 @@ class Resolvers {
         return await Character.findAll({ where: filters });
     }
 
+    @timing
     static async character(_: any, { id }: { id: number }) {
         return await Character.findByPk(id);
     }
