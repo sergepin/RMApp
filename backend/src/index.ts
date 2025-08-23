@@ -7,6 +7,7 @@ import cors from 'cors'
 import sequelize from './config/db';
 import typeDefs from './graphql/schema'
 import resolvers from './graphql/resolvers'
+import { requestLogger, errorLogger, setLoggerEnabled } from './middleware/logger';
 
 async function startServer(){
     const app = express();
@@ -18,12 +19,17 @@ async function startServer(){
 
         await server.start();
 
+        app.use(requestLogger);
+        
+        app.use(cors<cors.CorsRequest>());
+        app.use(bodyParser.json());
+
         app.use(
             '/graphql',
-            cors<cors.CorsRequest>(),
-            bodyParser.json(),
             expressMiddleware(server)
         );
+
+        app.use(errorLogger);
 
         try{
             await sequelize.authenticate();

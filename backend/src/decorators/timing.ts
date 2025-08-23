@@ -15,14 +15,14 @@ export function timing(target: any, propertyKey: string, descriptor: PropertyDes
             const endTime = performance.now();
             const executionTime = endTime - startTime;
             
-            console.log(`⏱️  ${propertyKey} executed in ${executionTime.toFixed(2)}ms`);
+            console.log(`DECORATOR - ⏱️  ${propertyKey} executed in ${executionTime.toFixed(2)}ms`);
             
             return result;
         } catch (error) {
             const endTime = performance.now();
             const executionTime = endTime - startTime;
             
-            console.error(`❌ ${propertyKey} failed after ${executionTime.toFixed(2)}ms:`, error);
+            console.error(`DECORATOR - ❌ ${propertyKey} failed after ${executionTime.toFixed(2)}ms:`, error);
             throw error;
         }
     };
