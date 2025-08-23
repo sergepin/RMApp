@@ -1,34 +1,32 @@
 import { Op } from 'sequelize'
 import Character from '../models/Character'
 import { timing } from '../decorators/timing'
+import { getOrSetCache, buildCacheKey } from '../utils/cache'
 
 class Resolvers {
     @timing
     static async characters(_: any, args: any) {
-        const filters: any = {};
+        const cacheKey = buildCacheKey("characters", args);
 
-        if (args.name) {
-            filters.name = { [Op.iLike]: `%${args.name}%` }
-        }
-        if (args.status) {
-            filters.status = { [Op.iLike]: args.status }
-        }
-        if (args.species) {
-            filters.species = { [Op.iLike]: args.species }
-        }
-        if (args.gender) {
-            filters.gender = { [Op.iLike]: args.gender }
-        }
-        if (args.origin) {
-            filters.origin = { [Op.iLike]: args.origin }
-        }
+        return await getOrSetCache(cacheKey, async () => {
+            const filters: any = {};
 
-        return await Character.findAll({ where: filters });
+            if (args.name) filters.name = { [Op.iLike]: `%${args.name}%` };
+            if (args.status) filters.status = { [Op.iLike]: args.status };
+            if (args.species) filters.species = { [Op.iLike]: args.species };
+            if (args.gender) filters.gender = { [Op.iLike]: args.gender };
+            if (args.origin) filters.origin = { [Op.iLike]: args.origin };
+
+            return await Character.findAll({ where: filters });
+        }, 3600);
     }
 
     @timing
     static async character(_: any, { id }: { id: number }) {
-        return await Character.findByPk(id);
+        const cacheKey = `character:${id}`;
+        return await getOrSetCache(cacheKey, async () => {
+            return await Character.findByPk(id);
+        }, 3600);
     }
 }
 

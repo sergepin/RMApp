@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon --exec tsx src/index.ts",
-    "seed": "tsx src/seed/seedCharacters.ts"
+    "seed": "tsx src/seed/seedCharacters.ts",
+    "flush-cache": "docker exec -it rmapp-redis redis-cli FLUSHALL"
   },
   "keywords": [],
   "author": "",
