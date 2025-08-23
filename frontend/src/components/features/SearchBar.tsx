@@ -1,39 +1,63 @@
-import React from 'react';
+import React from "react";
+import { FiSearch, FiSliders } from "react-icons/fi";
+import { FaSortAlphaDown, FaSortAlphaUp } from "react-icons/fa";
 
 interface SearchBarProps {
   searchTerm: string;
   onSearchChange: (value: string) => void;
   onSortToggle: () => void;
-  sortOrder: 'asc' | 'desc';
+  sortOrder: "asc" | "desc";
+  showAdvancedFilters: boolean;
+  onToggleAdvancedFilters: () => void;
 }
 
 export const SearchBar: React.FC<SearchBarProps> = ({
   searchTerm,
   onSearchChange,
   onSortToggle,
-  sortOrder
+  sortOrder,
+  showAdvancedFilters,
+  onToggleAdvancedFilters,
 }) => {
   return (
-    <div className="p-4 border-b border-gray-200">
-      <div className="flex items-center space-x-2 mb-4">
-        <div className="relative flex-1">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <span className="text-gray-400">🔍</span>
-          </div>
-          <input
-            type="text"
-            placeholder="Search or filter results"
-            value={searchTerm}
-            onChange={(e) => onSearchChange(e.target.value)}
-            className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent"
-          />
-        </div>
+    <div className="w-full px-4 py-2">
+      <div className="flex items-center bg-white rounded-xl shadow-md px-3 py-2">
+        {/* Icono de búsqueda */}
+        <FiSearch className="text-gray-400 w-5 h-5 mr-2" />
+
+        {/* Input */}
+        <input
+          type="text"
+          placeholder="Search or filter results"
+          value={searchTerm}
+          onChange={(e) => onSearchChange(e.target.value)}
+          className="flex-1 bg-transparent focus:outline-none text-gray-700 placeholder-gray-400"
+        />
+
+        {/* Botón de sort */}
         <button
           onClick={onSortToggle}
-          className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
-          aria-label={`Sort ${sortOrder === 'asc' ? 'descending' : 'ascending'}`}
+          className={`ml-2 p-2 rounded-lg transition-colors text-secondary-600 hover:bg-primary-100`}
+          aria-label={`Sort ${sortOrder === "asc" ? "descending" : "ascending"}`}
         >
-          {sortOrder === 'asc' ? '↓' : '↑'}
+          {sortOrder === "asc" ? (
+            <FaSortAlphaDown className="w-5 h-5" />
+          ) : (
+            <FaSortAlphaUp className="w-5 h-5" />
+          )}
+        </button>
+
+        {/* Botón de filtros avanzados */}
+        <button
+          onClick={onToggleAdvancedFilters}
+          className={`ml-2 p-2 rounded-lg transition-colors ${
+            showAdvancedFilters
+              ? "bg-primary-100 text-primary-600"
+              : "text-primary-600 hover:bg-primary-100"
+          }`}
+          aria-label="Toggle advanced filters"
+        >
+          <FiSliders className="w-5 h-5" />
         </button>
       </div>
     </div>

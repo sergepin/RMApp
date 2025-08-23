@@ -2,6 +2,7 @@ import React from 'react';
 import { Character } from '../../types/character';
 import { storage } from '../../utils/storage';
 import { CommentsSection } from './CommentSection';
+import { HiHeart, HiOutlineHeart } from 'react-icons/hi';
 
 interface CharacterDetailPanelProps {
   character: Character;
@@ -12,7 +13,7 @@ export const CharacterDetailPanel: React.FC<CharacterDetailPanelProps> = ({ char
 
   const handleFavoriteToggle = () => {
     storage.toggleFavorite(character.id);
-    // Force re-render
+    // Mantengo tu recarga forzada
     window.location.reload();
   };
 
@@ -28,13 +29,13 @@ export const CharacterDetailPanel: React.FC<CharacterDetailPanelProps> = ({ char
   };
 
   return (
-    <div className="max-w-2xl mx-auto">
-      {/* Character Avatar */}
-      <div className="relative mb-8">
+    <div className="max-w-xl md:max-w-2xl mx-auto px-4 py-6">
+      {/* Avatar + botón de favorito en círculo blanco */}
+      <div className="relative w-28 h-28 mx-auto mb-4">
         <img
           src={character.image}
           alt={character.name}
-          className="w-48 h-48 rounded-full mx-auto object-cover shadow-lg"
+          className="w-28 h-28 rounded-full object-cover shadow-md"
           onError={(e) => {
             const target = e.target as HTMLImageElement;
             target.src = 'https://via.placeholder.com/300x300?text=No+Image';
@@ -42,52 +43,53 @@ export const CharacterDetailPanel: React.FC<CharacterDetailPanelProps> = ({ char
         />
         <button
           onClick={handleFavoriteToggle}
-          className="absolute bottom-4 right-1/2 transform translate-x-1/2 p-2 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors"
+          className="absolute -bottom-1 -right-1 p-2 bg-white rounded-full shadow hover:bg-gray-100 transition-colors"
+          aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
         >
           {isFavorite ? (
-            <span className="text-green-500 text-2xl">❤️</span>
+            <HiHeart className="w-5 h-5 text-green-500" />
           ) : (
-            <span className="text-gray-400 text-2xl">🤍</span>
+            <HiOutlineHeart className="w-5 h-5 text-gray-400" />
           )}
         </button>
       </div>
 
-      {/* Character Name */}
-      <h1 className="text-4xl font-bold text-gray-800 text-center mb-8">
+      {/* Nombre */}
+      <h1 className="text-2xl md:text-3xl font-bold text-gray-900 text-center mb-6">
         {character.name}
       </h1>
 
-      {/* Character Details */}
-      <div className="space-y-4 mb-8">
-        <div className="flex items-center space-x-3">
-          <span className="text-gray-600 font-medium w-24">Species:</span>
-          <span className="text-gray-800">{character.species}</span>
+      {/* Detalles con separadores suaves */}
+      <div className="divide-y divide-gray-200 mb-8">
+        <div className="py-3">
+          <h3 className="text-sm font-medium text-gray-500">Specie</h3>
+          <p className="text-gray-900">{character.species}</p>
         </div>
-        
-        <div className="flex items-center space-x-3">
-          <span className="text-gray-600 font-medium w-24">Status:</span>
-          <div className="flex items-center space-x-2">
-            <div className={`w-3 h-3 rounded-full ${getStatusColor(character.status)}`}></div>
-            <span className="text-gray-800 capitalize">{character.status}</span>
+
+        <div className="py-3">
+          <h3 className="text-sm font-medium text-gray-500">Status</h3>
+          <div className="flex items-center gap-2">
+            <span className={`inline-block w-2.5 h-2.5 rounded-full ${getStatusColor(character.status)}`} />
+            <p className="text-gray-900 capitalize">{character.status}</p>
           </div>
         </div>
-        
+
         {character.gender && (
-          <div className="flex items-center space-x-3">
-            <span className="text-gray-600 font-medium w-24">Gender:</span>
-            <span className="text-gray-800 capitalize">{character.gender}</span>
+          <div className="py-3">
+            <h3 className="text-sm font-medium text-gray-500">Gender</h3>
+            <p className="text-gray-900 capitalize">{character.gender}</p>
           </div>
         )}
-        
+
         {character.origin && (
-          <div className="flex items-center space-x-3">
-            <span className="text-gray-600 font-medium w-24">Origin:</span>
-            <span className="text-gray-800">{character.origin}</span>
+          <div className="py-3">
+            <h3 className="text-sm font-medium text-gray-500">Origin</h3>
+            <p className="text-gray-900">{character.origin}</p>
           </div>
         )}
       </div>
 
-      {/* Comments Section */}
+      {/* Comentarios */}
       <CommentsSection characterId={character.id} />
     </div>
   );

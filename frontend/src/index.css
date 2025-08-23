@@ -26,3 +26,18 @@
     @apply bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow;
   }
 }
+
+/* Agregar a tu archivo CSS global o tailwind.css */
+
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}

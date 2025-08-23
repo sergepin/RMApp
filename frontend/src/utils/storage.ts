@@ -23,5 +23,40 @@ export const storage = {
 
   isFavorite: (characterId: number): boolean => {
     return storage.getFavorites().includes(characterId);
+  },
+
+  // ✅ Nuevas funciones para soft delete
+  getDeletedCharacters: (): number[] => {
+    try {
+      return JSON.parse(localStorage.getItem('deleted_characters') || '[]');
+    } catch {
+      return [];
+    }
+  },
+
+  setDeletedCharacters: (deletedIds: number[]): void => {
+    localStorage.setItem('deleted_characters', JSON.stringify(deletedIds));
+  },
+
+  softDeleteCharacter: (characterId: number): void => {
+    const deletedIds = storage.getDeletedCharacters();
+    if (!deletedIds.includes(characterId)) {
+      storage.setDeletedCharacters([...deletedIds, characterId]);
+    }
+  },
+
+  restoreCharacter: (characterId: number): void => {
+    const deletedIds = storage.getDeletedCharacters();
+    storage.setDeletedCharacters(deletedIds.filter(id => id !== characterId));
+  },
+
+  isCharacterDeleted: (characterId: number): boolean => {
+    return storage.getDeletedCharacters().includes(characterId);
+  },
+
+  // ✅ Función para obtener solo personajes no eliminados
+  getActiveCharacters: (allCharacters: any[]): any[] => {
+    const deletedIds = storage.getDeletedCharacters();
+    return allCharacters.filter(char => !deletedIds.includes(char.id));
   }
 };

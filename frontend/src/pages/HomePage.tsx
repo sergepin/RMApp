@@ -24,8 +24,16 @@ export const HomePage: React.FC = () => {
     setSelectedCharacter(character);
   };
 
+  // ESTO ES LO QUE FALTABA - La función para volver atrás
+  const handleBack = () => {
+    setSelectedCharacter(null);
+  };
+
   return (
-    <TwoColumnLayout selectedCharacter={selectedCharacter}>
+    <TwoColumnLayout 
+      selectedCharacter={selectedCharacter}
+      onBack={handleBack} // ← ESTA LÍNEA FALTABA
+    >
       <CharacterList
         characters={characters}
         loading={loading}
