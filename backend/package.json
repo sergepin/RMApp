@@ -13,6 +13,7 @@
     "migrate:create": "sequelize-cli migration:create --name",
     "db:create": "sequelize-cli db:create",
     "db:drop": "sequelize-cli db:drop",
+    "db:init": "npm run db:create && npm run migrate && npm run seed",
     "db:reset": "npm run db:drop && npm run db:create && npm run migrate && npm run seed",
     "test": "jest --config jest.config.cjs",
     "test:watch": "jest --config jest.config.cjs --watch",

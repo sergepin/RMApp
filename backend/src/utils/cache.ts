@@ -14,7 +14,7 @@ export async function getOrSetCache<T>(
 ): Promise<T> {
     const cachedData = await redisClient.get(key);
     if (cachedData) {
-        console.log(`REDIS CACHE -  Cache HIT for key: ${key}`);
+        console.log(`REDIS CACHE - ✅ Cache HIT for key: ${key}`);
         return JSON.parse(cachedData);
     }
 
