@@ -6,7 +6,13 @@
   "scripts": {
     "dev": "nodemon --exec tsx src/index.ts",
     "seed": "tsx src/seed/seedCharacters.ts",
-    "flush-cache": "docker exec -it rmapp-redis redis-cli FLUSHALL"
+    "flush-cache": "docker exec -it rmapp-redis redis-cli FLUSHALL",
+    "migrate": "sequelize-cli db:migrate",
+    "migrate:undo": "sequelize-cli db:migrate:undo",
+    "migrate:undo:all": "sequelize-cli db:migrate:undo:all",
+    "migrate:create": "sequelize-cli migration:create --name",
+    "db:create": "sequelize-cli db:create",
+    "db:drop": "sequelize-cli db:drop"
   },
   "keywords": [],
   "author": "",
@@ -31,6 +37,7 @@
     "@types/express": "^5.0.3",
     "@types/node": "^24.3.0",
     "nodemon": "^3.1.10",
+    "sequelize-cli": "^6.6.3",
     "ts-node": "^10.9.2",
     "tsx": "^4.20.4",
     "typescript": "^5.9.2"

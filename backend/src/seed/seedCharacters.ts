@@ -8,7 +8,13 @@ import Character from '../models/Character';
 
 async function seedCharacters() {
     try {
-        await sequelize.sync({ force: true }); // Clear the table before seeding
+        await sequelize.sync();
+
+        const existingCount = await Character.count();
+        if (existingCount > 0) {
+            console.log('Characters already seeded, skipping...');
+            process.exit(0);
+        }
 
         const { data } = await axios.get('https://rickandmortyapi.com/api/character');
         const characters = data.results.slice(0, 15);
