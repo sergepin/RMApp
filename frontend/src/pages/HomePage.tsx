@@ -1,29 +1,38 @@
-import React from 'react';
-import { Layout } from '../components/layout/Layout';
+import React, { useState, useEffect } from 'react';
+import { TwoColumnLayout } from '../components/layout/TwoColumnLayout';
 import { CharacterList } from '../components/features/CharacterList';
+import { CharacterDetailPanel } from '../components/features/CharacterDetailPanel';
 import { useCharacters } from '../hooks/useCharacters';
+import { Character } from '../types/character';
 
 export const HomePage: React.FC = () => {
   const { characters, loading, error } = useCharacters();
+  const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
+
+  // Listen for favorites changes to re-render
+  useEffect(() => {
+    const handleFavoritesChange = () => {
+      // Force re-render when favorites change
+      setSelectedCharacter(prev => prev);
+    };
+
+    window.addEventListener('favoritesChanged', handleFavoritesChange);
+    return () => window.removeEventListener('favoritesChanged', handleFavoritesChange);
+  }, []);
+
+  const handleCharacterSelect = (character: Character) => {
+    setSelectedCharacter(character);
+  };
 
   return (
-    <Layout>
-      <div className="space-y-8">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-800 mb-4">
-            Welcome to RMApp
-          </h1>
-          <p className="text-gray-600 mb-8">
-            Explore the Rick and Morty universe
-          </p>
-        </div>
-
-        <CharacterList 
-          characters={characters} 
-          loading={loading} 
-          error={error} 
-        />
-      </div>
-    </Layout>
+    <TwoColumnLayout selectedCharacter={selectedCharacter}>
+      <CharacterList
+        characters={characters}
+        loading={loading}
+        error={error}
+        selectedCharacterId={selectedCharacter?.id}
+        onCharacterSelect={handleCharacterSelect}
+      />
+    </TwoColumnLayout>
   );
 };
