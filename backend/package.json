@@ -12,7 +12,11 @@
     "migrate:undo:all": "sequelize-cli db:migrate:undo:all",
     "migrate:create": "sequelize-cli migration:create --name",
     "db:create": "sequelize-cli db:create",
-    "db:drop": "sequelize-cli db:drop"
+    "db:drop": "sequelize-cli db:drop",
+    "db:reset": "npm run db:drop && npm run db:create && npm run migrate && npm run seed",
+    "test": "jest --config jest.config.cjs",
+    "test:watch": "jest --config jest.config.cjs --watch",
+    "test:coverage": "jest --config jest.config.cjs --coverage"
   },
   "keywords": [],
   "author": "",
@@ -35,9 +39,12 @@
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
+    "@types/jest": "^30.0.0",
     "@types/node": "^24.3.0",
+    "jest": "^30.0.5",
     "nodemon": "^3.1.10",
     "sequelize-cli": "^6.6.3",
+    "ts-jest": "^29.4.1",
     "ts-node": "^10.9.2",
     "tsx": "^4.20.4",
     "typescript": "^5.9.2"
