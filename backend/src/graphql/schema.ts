@@ -11,6 +11,25 @@ const typeDefs = gql`
     image: String
   }
 
+  type Comment {
+    id: ID!
+    session_id: String!
+    character_id: Int!
+    text: String!
+    author_name: String
+    created_at: String!
+    updated_at: String!
+  }
+
+  type FavoriteResponse {
+    success: Boolean!
+    isFavorite: Boolean!
+  }
+
+  type DeleteResponse {
+    success: Boolean!
+  }
+
   type Query {
     characters(
       name: String
@@ -21,6 +40,25 @@ const typeDefs = gql`
     ): [Character]
 
     character(id: ID!): Character
+
+    favorites(session_id: String!): [Int!]!
+
+    isFavorite(session_id: String!, character_id: Int!): Boolean!
+
+    comments(character_id: Int!): [Comment!]!
+  }
+
+  type Mutation {
+    toggleFavorite(session_id: String!, character_id: Int!): FavoriteResponse!
+
+    addComment(
+      session_id: String!
+      character_id: Int!
+      text: String!
+      author_name: String
+    ): Comment!
+
+    deleteComment(id: Int!, session_id: String!): DeleteResponse!
   }
 `;
 

@@ -5,6 +5,7 @@ dotenv.config();
 import axios from 'axios';
 import sequelize from '../config/db';
 import Character from '../models/Character';
+import { seedFavoritesAndComments } from './seedFavoritesAndComments';
 
 async function seedCharacters() {
     try {
@@ -13,7 +14,7 @@ async function seedCharacters() {
         const existingCount = await Character.count();
         if (existingCount > 0) {
             console.log('Characters already seeded, skipping...');
-            process.exit(0);
+            return;
         }
 
         const { data } = await axios.get('https://rickandmortyapi.com/api/character');
@@ -32,12 +33,29 @@ async function seedCharacters() {
         await Character.bulkCreate(mapped);
 
         console.log('Characters seeded successfully');
-        process.exit(0);
     } catch (error) {
         console.error('Error seeding characters:', error);
+        throw error;
+    }
+}
+
+async function runAllSeeds() {
+    try {
+        console.log('🌱 Starting database seeding...');
+        
+        await seedCharacters();
+        
+        await seedFavoritesAndComments();
+        
+        console.log('✅ All seeds completed successfully!');
+        process.exit(0);
+    } catch (error) {
+        console.error('💥 Seeding failed:', error);
         process.exit(1);
     }
 }
 
-seedCharacters();
+if (import.meta.url === `file://${process.argv[1]}`) {
+    runAllSeeds();
+}
 
