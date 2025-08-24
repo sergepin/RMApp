@@ -1,5 +1,5 @@
 import { Op } from 'sequelize'
-import { Character, Favorite, Comment } from '../models/init'
+import { Character, Favorite, Comment, DeletedCharacter } from '../models/init'
 import { timing } from '../decorators/timing'
 import { getOrSetCache, buildCacheKey } from '../utils/cache'
 
@@ -36,8 +36,8 @@ class Resolvers {
                 where: { session_id },
                 include: [{ model: Character, as: 'character' }]
             });
-            const result = favorites.map(fav => fav.character_id);
-            return result;
+            
+            return favorites.map(fav => fav.character_id);
         } catch (error) {
             throw error;
         }
@@ -64,6 +64,28 @@ class Resolvers {
             });
         }, 300);
     }
+
+    @timing
+    static async deletedCharacters(_: any, { session_id }: { session_id: string }) {
+        const cacheKey = `deletedCharacters:${session_id}`;
+        return await getOrSetCache(cacheKey, async () => {
+            return await DeletedCharacter.findAll({
+                where: { session_id },
+                order: [['deleted_at', 'DESC']]
+            });
+        }, 300);
+    }
+
+    @timing
+    static async isCharacterDeleted(_: any, { session_id, character_id }: { session_id: string, character_id: number }) {
+        const cacheKey = `isCharacterDeleted:${session_id}:${character_id}`;
+        return await getOrSetCache(cacheKey, async () => {
+            const deleted = await DeletedCharacter.findOne({
+                where: { session_id, character_id }
+            });
+            return !!deleted;
+        }, 300);
+    }
 }
 
 const resolvers = {
@@ -73,6 +95,8 @@ const resolvers = {
         favorites: Resolvers.favorites,
         isFavorite: Resolvers.isFavorite,
         comments: Resolvers.comments,
+        deletedCharacters: Resolvers.deletedCharacters,
+        isCharacterDeleted: Resolvers.isCharacterDeleted,
     },
     Mutation: {
         toggleFavorite: async (_: any, { session_id, character_id }: { session_id: string, character_id: number }) => {
@@ -139,6 +163,49 @@ const resolvers = {
             }
 
             await comment.destroy();
+            return { success: true };
+        },
+
+        softDeleteCharacter: async (_: any, { session_id, character_id }: { session_id: string, character_id: number }) => {
+            const character = await Character.findByPk(character_id);
+            if (!character) {
+                throw new Error('Character not found');
+            }
+
+            if (!session_id || session_id.trim() === '') {
+                throw new Error('Session ID is required');
+            }
+
+            const existing = await DeletedCharacter.findOne({
+                where: { session_id, character_id }
+            });
+
+            if (existing) {
+                throw new Error('Character is already deleted');
+            }
+
+            await DeletedCharacter.create({ 
+                session_id, 
+                character_id 
+            });
+            
+            return { success: true };
+        },
+
+        restoreCharacter: async (_: any, { session_id, character_id }: { session_id: string, character_id: number }) => {
+            if (!session_id || session_id.trim() === '') {
+                throw new Error('Session ID is required');
+            }
+
+            const deleted = await DeletedCharacter.findOne({
+                where: { session_id, character_id }
+            });
+
+            if (!deleted) {
+                throw new Error('Character is not deleted');
+            }
+
+            await deleted.destroy();
             return { success: true };
         }
     },

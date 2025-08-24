@@ -21,6 +21,13 @@ const typeDefs = gql`
     updated_at: String!
   }
 
+  type DeletedCharacter {
+    id: ID!
+    character_id: Int!
+    session_id: String!
+    deleted_at: String!
+  }
+
   type FavoriteResponse {
     success: Boolean!
     isFavorite: Boolean!
@@ -46,6 +53,10 @@ const typeDefs = gql`
     isFavorite(session_id: String!, character_id: Int!): Boolean!
 
     comments(character_id: Int!): [Comment!]!
+
+    deletedCharacters(session_id: String!): [DeletedCharacter!]!
+
+    isCharacterDeleted(session_id: String!, character_id: Int!): Boolean!
   }
 
   type Mutation {
@@ -59,6 +70,10 @@ const typeDefs = gql`
     ): Comment!
 
     deleteComment(id: Int!, session_id: String!): DeleteResponse!
+
+    softDeleteCharacter(session_id: String!, character_id: Int!): DeleteResponse!
+
+    restoreCharacter(session_id: String!, character_id: Int!): DeleteResponse!
   }
 `;
 

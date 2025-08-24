@@ -17,20 +17,22 @@ export const CharacterListItem: React.FC<CharacterListItemProps> = ({
   onClick,
   onSoftDelete,
 }) => {
-  const { isFavorite, toggleFavorite, loading } = useFavorites();
-  const { softDeleteCharacter } = useSoftDelete();
+  const { isFavorite, toggleFavorite, loading: favoriteLoading } = useFavorites();
+  const { softDeleteCharacter, loading: deleteLoading } = useSoftDelete();
 
   const handleFavoriteToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!loading) {
+    if (!favoriteLoading) {
       toggleFavorite(character.id);
     }
   };
 
   const handleSoftDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
-    softDeleteCharacter(character.id);
-    onSoftDelete?.(character.id);
+    if (!deleteLoading) {
+      softDeleteCharacter(character.id);
+      onSoftDelete?.(character.id);
+    }
   };
 
   const isCharacterFavorite = isFavorite(character.id);
@@ -70,9 +72,9 @@ export const CharacterListItem: React.FC<CharacterListItemProps> = ({
         <div className="flex items-center gap-2">
           <button
             onClick={handleFavoriteToggle}
-            disabled={loading}
+            disabled={favoriteLoading}
             className={`text-lg transition-all duration-200 ${
-              loading 
+              favoriteLoading 
                 ? 'opacity-50 cursor-not-allowed' 
                 : 'hover:scale-110 cursor-pointer'
             }`}
@@ -87,6 +89,7 @@ export const CharacterListItem: React.FC<CharacterListItemProps> = ({
 
           <button
             onClick={handleSoftDelete}
+            disabled={deleteLoading}
             className="text-lg hover:scale-110 transition-transform text-gray-400 hover:text-red-500"
             aria-label="Soft delete character"
           >

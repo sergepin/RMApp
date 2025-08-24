@@ -1,12 +1,11 @@
 import Character from './Character';
 import Favorite from './Favorite';
 import Comment from './Comment';
+import DeletedCharacter from './DeletedCharacter';
 
-// Initialize associations after all models are defined
 export function initializeAssociations() {
-  console.log('🔗 Setting up model associations...');
-  
-  // Character associations
+  console.log('Setting up model associations...');
+
   Character.hasMany(Favorite, {
     foreignKey: 'character_id',
     as: 'favorites'
@@ -17,7 +16,11 @@ export function initializeAssociations() {
     as: 'comments'
   });
 
-  // Favorite associations
+  Character.hasMany(DeletedCharacter, {
+    foreignKey: 'character_id',
+    as: 'deletedRecords'
+  });
+
   Favorite.belongsTo(Character, {
     foreignKey: 'character_id',
     as: 'character'
@@ -29,6 +32,12 @@ export function initializeAssociations() {
     as: 'character'
   });
 
+  // DeletedCharacter associations
+  DeletedCharacter.belongsTo(Character, {
+    foreignKey: 'character_id',
+    as: 'character'
+  });
+
   console.log('✅ Model associations initialized successfully!');
 }
 
@@ -36,5 +45,6 @@ export function initializeAssociations() {
 export {
   Character,
   Favorite,
-  Comment
+  Comment,
+  DeletedCharacter
 };

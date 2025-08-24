@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Character } from '../../types/character';
 import { useSoftDelete } from '../../hooks/useSoftDelete';
+import { HiX } from 'react-icons/hi';
 
 interface DeletedCharactersManagerProps {
   characters: Character[];
@@ -19,14 +20,15 @@ export const DeletedCharactersManager: React.FC<DeletedCharactersManagerProps> =
   const { deletedCharacters: deletedIds, restoreCharacter } = useSoftDelete();
 
   useEffect(() => {
-    const deleted = characters.filter(char => deletedIds.includes(char.id));
+    const deleted = characters.filter(char => deletedIds.includes(Number(char.id)));
     setDeletedCharacters(deleted);
   }, [characters, deletedIds, isOpen]);
 
-  const handleRestore = (characterId: number) => {
-    restoreCharacter(characterId);
-    onRestore(characterId);
-    setDeletedCharacters(prev => prev.filter(char => char.id !== characterId));
+  const handleRestore = (characterId: number | string) => {
+    const numericId = Number(characterId);
+    restoreCharacter(numericId);
+    onRestore(numericId);
+    setDeletedCharacters(prev => prev.filter(char => Number(char.id) !== numericId));
   };
 
   if (!isOpen) return null;
@@ -43,7 +45,7 @@ export const DeletedCharactersManager: React.FC<DeletedCharactersManagerProps> =
               onClick={onClose}
               className="text-gray-400 hover:text-gray-600"
             >
-              ✕
+              <HiX className="h-6 w-6" />
             </button>
           </div>
         </div>
@@ -55,7 +57,7 @@ export const DeletedCharactersManager: React.FC<DeletedCharactersManagerProps> =
             </div>
           ) : (
             <div className="divide-y divide-gray-100">
-              {deletedCharacters.map((character) => (
+              {deletedCharacters.map((character: any) => (
                 <div key={character.id} className="p-4 flex items-center space-x-3">
                   <img
                     src={character.image}

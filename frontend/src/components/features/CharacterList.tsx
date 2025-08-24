@@ -76,7 +76,7 @@ export const CharacterList: React.FC<CharacterListProps> = ({
       const comparison = a.name.localeCompare(b.name);
       return sortOrder === 'asc' ? comparison : -comparison;
     });
-  }, [characters, searchTerm, sortOrder, filters, deletedCharacters]);
+  }, [characters, searchTerm, sortOrder, filters, deletedCharacters, getActiveCharacters]);
 
   const favoriteCharacters = useMemo(() => 
     filteredAndSortedCharacters.filter(char => 

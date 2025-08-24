@@ -27,6 +27,23 @@ export const GET_COMMENTS = gql`
   }
 `;
 
+export const GET_DELETED_CHARACTERS = gql`
+  query GetDeletedCharacters($session_id: String!) {
+    deletedCharacters(session_id: $session_id) {
+      id
+      character_id
+      session_id
+      deleted_at
+    }
+  }
+`;
+
+export const IS_CHARACTER_DELETED = gql`
+  query IsCharacterDeleted($session_id: String!, $character_id: Int!) {
+    isCharacterDeleted(session_id: $session_id, character_id: $character_id)
+  }
+`;
+
 // Mutations
 export const TOGGLE_FAVORITE = gql`
   mutation ToggleFavorite($session_id: String!, $character_id: Int!) {
@@ -54,6 +71,22 @@ export const ADD_COMMENT = gql`
 export const DELETE_COMMENT = gql`
   mutation DeleteComment($id: Int!, $session_id: String!) {
     deleteComment(id: $id, session_id: $session_id) {
+      success
+    }
+  }
+`;
+
+export const SOFT_DELETE_CHARACTER = gql`
+  mutation SoftDeleteCharacter($session_id: String!, $character_id: Int!) {
+    softDeleteCharacter(session_id: $session_id, character_id: $character_id) {
+      success
+    }
+  }
+`;
+
+export const RESTORE_CHARACTER = gql`
+  mutation RestoreCharacter($session_id: String!, $character_id: Int!) {
+    restoreCharacter(session_id: $session_id, character_id: $character_id) {
       success
     }
   }
