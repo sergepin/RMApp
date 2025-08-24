@@ -40,7 +40,6 @@ Character.init({
     modelName: 'Character',
     tableName: 'characters',
     timestamps: false, // Disable createdAt and updatedAt fields
-}
-)
+})
 
 export default Character;
