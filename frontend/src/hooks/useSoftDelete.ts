@@ -5,10 +5,8 @@ export const useSoftDelete = () => {
   const [deletedCharacters, setDeletedCharacters] = useState<number[]>([]);
 
   useEffect(() => {
-    // Cargar personajes eliminados iniciales
     setDeletedCharacters(storage.getDeletedCharacters());
 
-    // Escuchar cambios en personajes eliminados
     const handleCharactersChanged = () => {
       setDeletedCharacters(storage.getDeletedCharacters());
     };
@@ -23,14 +21,12 @@ export const useSoftDelete = () => {
   const softDeleteCharacter = (characterId: number) => {
     storage.softDeleteCharacter(characterId);
     setDeletedCharacters(storage.getDeletedCharacters());
-    // Disparar evento para otros componentes
     window.dispatchEvent(new CustomEvent('charactersChanged'));
   };
 
   const restoreCharacter = (characterId: number) => {
     storage.restoreCharacter(characterId);
     setDeletedCharacters(storage.getDeletedCharacters());
-    // Disparar evento para otros componentes
     window.dispatchEvent(new CustomEvent('charactersChanged'));
   };
 

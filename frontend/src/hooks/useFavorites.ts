@@ -5,10 +5,8 @@ export const useFavorites = () => {
   const [favorites, setFavorites] = useState<number[]>([]);
 
   useEffect(() => {
-    // Cargar favoritos iniciales
     setFavorites(storage.getFavorites());
 
-    // Escuchar cambios en favoritos
     const handleFavoritesChange = () => {
       setFavorites(storage.getFavorites());
     };
@@ -23,7 +21,6 @@ export const useFavorites = () => {
   const toggleFavorite = (characterId: number) => {
     const newFavorites = storage.toggleFavorite(characterId);
     setFavorites(newFavorites);
-    // Disparar evento para otros componentes
     window.dispatchEvent(new CustomEvent('favoritesChanged'));
   };
 
