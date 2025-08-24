@@ -113,6 +113,9 @@ export const CharacterList: React.FC<CharacterListProps> = ({
 
   const { softDeleteCharacter, restoreCharacter } = useSoftDelete();
 
+  const hasActiveFilters = filters.status || filters.species || filters.gender;
+  const activeFiltersCount = [filters.status, filters.species, filters.gender].filter(Boolean).length;
+
   const handleSoftDelete = (characterId: number) => {
     softDeleteCharacter(characterId);
   };
@@ -146,32 +149,59 @@ export const CharacterList: React.FC<CharacterListProps> = ({
   return (
     <div className="h-full flex flex-col">
       <div className="p-4 border-b border-gray-200">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-800">Rick and Morty list</h1>
+        <div className="flex items-center gap-4 mb-4">
+          <img 
+            src="/portal.png" 
+            alt="Portal" 
+            className="w-12 h-12 object-contain"
+          />
+          <h1 className="text-3xl font-bold bg-gradient-to-r to-primary-700 from-secondary-600 bg-clip-text text-transparent">
+            Multiverse Explorer
+          </h1>
+        </div>
+
+        {/* Contador de filtros activos */}
+        {hasActiveFilters && (
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-sm text-gray-600">Active filters:</span>
+            <span className="px-2 py-1 text-xs font-medium bg-purple-100 text-purple-700 rounded-full">
+              {activeFiltersCount} filter{activeFiltersCount !== 1 ? 's' : ''}
+            </span>
+          </div>
+        )}
+      </div>
+
+      <div className="p-4 border-b border-gray-200">
+        <div className="flex items-center gap-3">
+          <div className="flex-1">
+            <SearchBar
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
+              onSortToggle={handleSortToggle}
+              sortOrder={sortOrder}
+              showAdvancedFilters={showAdvancedFilters}
+              onToggleAdvancedFilters={handleToggleAdvancedFilters}
+            />
+          </div>
+          
           <button
-              onClick={() => setShowDeletedManager(true)}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-medium
-                        bg-red-50 text-red-700 rounded-xl shadow-sm
-                        hover:bg-red-100 hover:shadow transition-all"
-            >
-              <HiTrash className="w-5 h-5 text-red-500" />
-              <span>Deleted</span>
-              <span className="ml-1 px-2 py-0.5 text-xs font-semibold
-                              bg-red-500 text-white rounded-full">
+            onClick={() => setShowDeletedManager(true)}
+            className="flex items-center gap-2 px-3 py-2 text-sm font-medium
+                      text-gray-600 hover:text-gray-800 hover:bg-gray-50 
+                      rounded-lg transition-all duration-200 group"
+          >
+            <HiTrash className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors" />
+            <span>Deleted</span>
+            {deletedCharacters.length > 0 && (
+              <span className="px-2 py-0.5 text-xs font-semibold
+                              bg-gray-200 text-gray-700 rounded-full min-w-[20px] text-center
+                              group-hover:bg-gray-300 transition-colors">
                 {deletedCharacters.length}
               </span>
+            )}
           </button>
         </div>
       </div>
-
-      <SearchBar
-        searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
-        onSortToggle={handleSortToggle}
-        sortOrder={sortOrder}
-        showAdvancedFilters={showAdvancedFilters}
-        onToggleAdvancedFilters={handleToggleAdvancedFilters}
-      />
 
       {showAdvancedFilters && (
         <AdvancedFilters

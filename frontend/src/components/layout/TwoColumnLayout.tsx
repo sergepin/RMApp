@@ -1,6 +1,7 @@
 import React from 'react';
 import { Character } from '../../types/character';
 import { CharacterDetailPanel } from '../features/CharacterDetailPanel';
+import { Footer } from './Footer';
 import { HiArrowLeft } from 'react-icons/hi';
 
 interface TwoColumnLayoutProps {
@@ -9,16 +10,14 @@ interface TwoColumnLayoutProps {
   onBack?: () => void;
 }
 
-
-
 export const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({ 
   children, 
   selectedCharacter,
   onBack
 }) => {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="flex h-screen">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      <div className="flex flex-1 h-screen">
         <div className="hidden md:flex bg-white border-r border-gray-100 shadow-sm overflow-y-auto">
           {children}
         </div>
@@ -64,6 +63,8 @@ export const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({
           )}
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 };
