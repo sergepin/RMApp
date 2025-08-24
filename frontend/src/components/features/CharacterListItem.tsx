@@ -58,7 +58,6 @@ export const CharacterListItem: React.FC<CharacterListItemProps> = ({
           />
         </div>
 
-        {/* Character Info */}
         <div className="flex-1 min-w-0">
           <h3 className="text-sm font-medium text-gray-800 truncate">
             {character.name}
@@ -66,7 +65,6 @@ export const CharacterListItem: React.FC<CharacterListItemProps> = ({
           <p className="text-xs text-gray-500 truncate">{character.species}</p>
         </div>
 
-        {/* Favorite + Soft Delete */}
         <div className="flex items-center gap-2">
           <button
             onClick={handleFavoriteToggle}

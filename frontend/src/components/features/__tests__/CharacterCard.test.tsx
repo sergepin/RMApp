@@ -1,15 +1,21 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import { CharacterCard } from '../CharacterCard';
+import { CharacterListItem } from '../CharacterListItem';
 import { Character } from '../../../types/character';
 
-// Mock the storage utility
-vi.mock('../../../utils/storage', () => ({
-  storage: {
-    isFavorite: vi.fn(),
+// Mock the hooks
+vi.mock('../../../hooks/useFavorites', () => ({
+  useFavorites: () => ({
+    isFavorite: vi.fn((id: number) => id === 1),
     toggleFavorite: vi.fn(),
-  },
+  }),
+}));
+
+vi.mock('../../../hooks/useSoftDelete', () => ({
+  useSoftDelete: () => ({
+    softDeleteCharacter: vi.fn(),
+  }),
 }));
 
 const mockCharacter: Character = {
@@ -30,30 +36,32 @@ const renderWithRouter = (component: React.ReactElement) => {
   );
 };
 
-describe('CharacterCard', () => {
+describe('CharacterListItem', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it('renders character information correctly', () => {
     renderWithRouter(
-      <CharacterCard 
+      <CharacterListItem 
         character={mockCharacter} 
-        onFavoriteToggle={vi.fn()} 
+        isSelected={false}
+        onClick={vi.fn()}
+        onSoftDelete={vi.fn()}
       />
     );
 
     expect(screen.getByText('Rick Sanchez')).toBeInTheDocument();
     expect(screen.getByText('Human')).toBeInTheDocument();
-    expect(screen.getByText('Alive')).toBeInTheDocument();
-    expect(screen.getByText('Male')).toBeInTheDocument();
   });
 
   it('displays character image with fallback', () => {
     renderWithRouter(
-      <CharacterCard 
+      <CharacterListItem 
         character={mockCharacter} 
-        onFavoriteToggle={vi.fn()} 
+        isSelected={false}
+        onClick={vi.fn()}
+        onSoftDelete={vi.fn()}
       />
     );
 
@@ -62,33 +70,54 @@ describe('CharacterCard', () => {
     expect(image).toHaveAttribute('src', 'https://example.com/rick.jpg');
   });
 
-  it('calls onFavoriteToggle when favorite button is clicked', () => {
-    const mockOnFavoriteToggle = vi.fn();
+  it('calls onClick when character item is clicked', () => {
+    const mockOnClick = vi.fn();
     
     renderWithRouter(
-      <CharacterCard 
+      <CharacterListItem 
         character={mockCharacter} 
-        onFavoriteToggle={mockOnFavoriteToggle} 
+        isSelected={false}
+        onClick={mockOnClick}
+        onSoftDelete={vi.fn()}
       />
     );
 
-    const favoriteButton = screen.getByLabelText(/add to favorites/i);
-    fireEvent.click(favoriteButton);
+    const characterItem = screen.getByText('Rick Sanchez').closest('div');
+    fireEvent.click(characterItem!);
 
-    expect(mockOnFavoriteToggle).toHaveBeenCalledWith(1);
+    expect(mockOnClick).toHaveBeenCalled();
   });
 
-  it('renders correct status color based on status', () => {
-    const deadCharacter = { ...mockCharacter, status: 'Dead' };
+  it('calls onSoftDelete when delete button is clicked', () => {
+    const mockOnSoftDelete = vi.fn();
     
     renderWithRouter(
-      <CharacterCard 
-        character={deadCharacter} 
-        onFavoriteToggle={vi.fn()} 
+      <CharacterListItem 
+        character={mockCharacter} 
+        isSelected={false}
+        onClick={vi.fn()}
+        onSoftDelete={mockOnSoftDelete}
       />
     );
 
-    const statusElement = screen.getByText('Dead');
-    expect(statusElement).toBeInTheDocument();
+    const deleteButton = screen.getByLabelText('Soft delete character');
+    fireEvent.click(deleteButton);
+
+    expect(mockOnSoftDelete).toHaveBeenCalledWith(1);
+  });
+
+  it('shows favorite heart when character is favorited', () => {
+    renderWithRouter(
+      <CharacterListItem 
+        character={mockCharacter} 
+        isSelected={false}
+        onClick={vi.fn()}
+        onSoftDelete={vi.fn()}
+      />
+    );
+
+    // Since our mock returns true for id === 1, this should show the filled heart
+    const favoriteButton = screen.getByLabelText('Remove from favorites');
+    expect(favoriteButton).toBeInTheDocument();
   });
 });
