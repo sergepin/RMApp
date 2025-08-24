@@ -31,14 +31,16 @@ class Resolvers {
 
     @timing
     static async favorites(_: any, { session_id }: { session_id: string }) {
-        const cacheKey = `favorites:${session_id}`;
-        return await getOrSetCache(cacheKey, async () => {
+        try {
             const favorites = await Favorite.findAll({
                 where: { session_id },
                 include: [{ model: Character, as: 'character' }]
             });
-            return favorites.map(fav => fav.character_id);
-        }, 300);
+            const result = favorites.map(fav => fav.character_id);
+            return result;
+        } catch (error) {
+            throw error;
+        }
     }
 
     @timing
@@ -74,13 +76,11 @@ const resolvers = {
     },
     Mutation: {
         toggleFavorite: async (_: any, { session_id, character_id }: { session_id: string, character_id: number }) => {
-            // Validate that character exists
             const character = await Character.findByPk(character_id);
             if (!character) {
                 throw new Error('Character not found');
             }
 
-            // Validate session_id
             if (!session_id || session_id.trim() === '') {
                 throw new Error('Session ID is required');
             }
@@ -99,13 +99,11 @@ const resolvers = {
         },
 
         addComment: async (_: any, { session_id, character_id, text, author_name }: { session_id: string, character_id: number, text: string, author_name?: string }) => {
-            // Validate that character exists
             const character = await Character.findByPk(character_id);
             if (!character) {
                 throw new Error('Character not found');
             }
 
-            // Validate required fields
             if (!session_id || session_id.trim() === '') {
                 throw new Error('Session ID is required');
             }
@@ -114,7 +112,6 @@ const resolvers = {
                 throw new Error('Comment text is required');
             }
 
-            // Validate text length
             if (text.length > 1000) {
                 throw new Error('Comment text is too long (max 1000 characters)');
             }
@@ -129,7 +126,6 @@ const resolvers = {
         },
 
         deleteComment: async (_: any, { id, session_id }: { id: number, session_id: string }) => {
-            // Validate session_id
             if (!session_id || session_id.trim() === '') {
                 throw new Error('Session ID is required');
             }
