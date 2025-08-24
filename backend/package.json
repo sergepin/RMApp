@@ -4,6 +4,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "setup": "node setup.cjs",
     "dev": "nodemon --exec tsx src/index.ts",
     "seed": "tsx src/seed/seedCharacters.ts",
     "flush-cache": "docker exec -it rmapp-redis redis-cli FLUSHALL",

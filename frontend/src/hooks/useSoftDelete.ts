@@ -18,13 +18,13 @@ export const useSoftDelete = () => {
     };
   }, []);
 
-  const softDeleteCharacter = (characterId: number | string) => {
+  const softDeleteCharacter = (characterId: number) => {
     storage.softDeleteCharacter(characterId);
     setDeletedCharacters(storage.getDeletedCharacters());
     window.dispatchEvent(new CustomEvent('charactersChanged'));
   };
 
-  const restoreCharacter = (characterId: number | string) => {
+  const restoreCharacter = (characterId: number) => {
     storage.restoreCharacter(characterId);
     setDeletedCharacters(storage.getDeletedCharacters());
     window.dispatchEvent(new CustomEvent('charactersChanged'));

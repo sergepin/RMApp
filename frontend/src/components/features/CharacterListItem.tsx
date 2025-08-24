@@ -8,7 +8,7 @@ interface CharacterListItemProps {
   character: Character;
   isSelected: boolean;
   onClick: () => void;
-  onSoftDelete?: (id: number | string) => void;
+  onSoftDelete?: (id: number) => void;
 }
 
 export const CharacterListItem: React.FC<CharacterListItemProps> = ({
