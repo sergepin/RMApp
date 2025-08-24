@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { storage } from '../utils/storage';
 
 export const useSoftDelete = () => {
-  const [deletedCharacters, setDeletedCharacters] = useState<number[]>([]);
+  const [deletedCharacters, setDeletedCharacters] = useState<(number | string)[]>([]);
 
   useEffect(() => {
     setDeletedCharacters(storage.getDeletedCharacters());
@@ -18,19 +18,19 @@ export const useSoftDelete = () => {
     };
   }, []);
 
-  const softDeleteCharacter = (characterId: number) => {
+  const softDeleteCharacter = (characterId: number | string) => {
     storage.softDeleteCharacter(characterId);
     setDeletedCharacters(storage.getDeletedCharacters());
     window.dispatchEvent(new CustomEvent('charactersChanged'));
   };
 
-  const restoreCharacter = (characterId: number) => {
+  const restoreCharacter = (characterId: number | string) => {
     storage.restoreCharacter(characterId);
     setDeletedCharacters(storage.getDeletedCharacters());
     window.dispatchEvent(new CustomEvent('charactersChanged'));
   };
 
-  const isCharacterDeleted = (characterId: number): boolean => {
+  const isCharacterDeleted = (characterId: number | string): boolean => {
     return deletedCharacters.includes(characterId);
   };
 

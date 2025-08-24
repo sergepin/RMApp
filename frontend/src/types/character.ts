@@ -1,5 +1,5 @@
 export interface Character {
-  id: number;
+  id: number | string;
   name: string;
   species: string;
   status: string;

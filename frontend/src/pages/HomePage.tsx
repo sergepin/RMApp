@@ -34,7 +34,7 @@ export const HomePage: React.FC = () => {
         characters={characters}
         loading={loading}
         error={error}
-        selectedCharacterId={selectedCharacter?.id}
+        selectedCharacterId={selectedCharacter?.id ? Number(selectedCharacter.id) : undefined}
         onCharacterSelect={handleCharacterSelect}
       />
     </TwoColumnLayout>

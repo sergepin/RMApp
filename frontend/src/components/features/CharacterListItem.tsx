@@ -8,7 +8,7 @@ interface CharacterListItemProps {
   character: Character;
   isSelected: boolean;
   onClick: () => void;
-  onSoftDelete?: (id: number) => void;
+  onSoftDelete?: (id: number | string) => void;
 }
 
 export const CharacterListItem: React.FC<CharacterListItemProps> = ({
@@ -17,12 +17,14 @@ export const CharacterListItem: React.FC<CharacterListItemProps> = ({
   onClick,
   onSoftDelete,
 }) => {
-  const { isFavorite, toggleFavorite } = useFavorites();
+  const { isFavorite, toggleFavorite, loading } = useFavorites();
   const { softDeleteCharacter } = useSoftDelete();
 
   const handleFavoriteToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
-    toggleFavorite(character.id);
+    if (!loading) {
+      toggleFavorite(character.id);
+    }
   };
 
   const handleSoftDelete = (e: React.MouseEvent) => {
@@ -44,7 +46,7 @@ export const CharacterListItem: React.FC<CharacterListItemProps> = ({
         {/* Avatar con highlight si es favorito */}
         <div
           className={`relative flex-shrink-0 w-10 h-10 rounded-full overflow-hidden ${
-            isCharacterFavorite ? "ring-2 ring-white bg-white p-0.5" : ""
+            isCharacterFavorite ? "ring-2 ring-secondary-600 bg-white p-0.2" : ""
           }`}
         >
           <img
@@ -68,7 +70,12 @@ export const CharacterListItem: React.FC<CharacterListItemProps> = ({
         <div className="flex items-center gap-2">
           <button
             onClick={handleFavoriteToggle}
-            className="text-lg hover:scale-110 transition-transform"
+            disabled={loading}
+            className={`text-lg transition-all duration-200 ${
+              loading 
+                ? 'opacity-50 cursor-not-allowed' 
+                : 'hover:scale-110 cursor-pointer'
+            }`}
             aria-label={isCharacterFavorite ? "Remove from favorites" : "Add to favorites"}
           >
             {isCharacterFavorite ? (

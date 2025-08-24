@@ -1,36 +1,98 @@
 import { useState, useEffect } from 'react';
-import { storage } from '../utils/storage';
+import { useQuery, useMutation, useApolloClient } from '@apollo/client/react';
+import { GET_FAVORITES, TOGGLE_FAVORITE } from '../graphql/queries';
+import { useSessionId } from './useSessionId';
+
+interface FavoritesData {
+  favorites: number[];
+}
+
+interface ToggleFavoriteData {
+  toggleFavorite: {
+    success: boolean;
+    isFavorite: boolean;
+  };
+}
 
 export const useFavorites = () => {
+  const { sessionId } = useSessionId();
   const [favorites, setFavorites] = useState<number[]>([]);
+  const client = useApolloClient();
 
+  // Query to get all favorites
+  const { 
+    data: favoritesData, 
+    loading: favoritesLoading, 
+    error: favoritesError, 
+    refetch 
+  } = useQuery<FavoritesData>(GET_FAVORITES, {
+    variables: { session_id: sessionId },
+    skip: !sessionId,
+    fetchPolicy: 'network-only',
+    notifyOnNetworkStatusChange: true,
+  });
+
+  // Mutation to toggle favorite
+  const [toggleFavoriteMutation, { loading: toggleLoading }] = useMutation<ToggleFavoriteData>(TOGGLE_FAVORITE, {
+    onCompleted: async (data: ToggleFavoriteData) => {
+      if (data.toggleFavorite.success) {
+        await refetch();
+      }
+    },
+    onError: (error: Error) => {
+      console.error('Error toggling favorite:', error);
+      refetch();
+    },
+  });
+
+  // Update local state when data changes from the server
   useEffect(() => {
-    setFavorites(storage.getFavorites());
+    if (favoritesData?.favorites) {
+      setFavorites(favoritesData.favorites);
+    }
+  }, [favoritesData]);
 
-    const handleFavoritesChange = () => {
-      setFavorites(storage.getFavorites());
-    };
+  // Load favorites when sessionId changes
+  useEffect(() => {
+    if (sessionId) {
+      refetch();
+    }
+  }, [sessionId, refetch]);
 
-    window.addEventListener('favoritesChanged', handleFavoritesChange);
-    
-    return () => {
-      window.removeEventListener('favoritesChanged', handleFavoritesChange);
-    };
-  }, []);
+  const toggleFavorite = async (characterId: number | string) => {
+    if (!sessionId) return;
 
-  const toggleFavorite = (characterId: number) => {
-    const newFavorites = storage.toggleFavorite(characterId);
-    setFavorites(newFavorites);
-    window.dispatchEvent(new CustomEvent('favoritesChanged'));
+    // Convert to number and validate
+    const numericId = parseInt(String(characterId), 10);
+    if (isNaN(numericId)) {
+      console.error('Invalid character ID:', characterId);
+      return;
+    }
+
+    try {
+      await toggleFavoriteMutation({
+        variables: {
+          session_id: sessionId,
+          character_id: numericId,
+        },
+      });
+    } catch (error) {
+      console.error('Failed to toggle favorite:', error);
+    }
   };
 
-  const isFavorite = (characterId: number) => {
-    return favorites.includes(characterId);
+  const isFavorite = (characterId: number | string) => {
+    const numericId = parseInt(String(characterId), 10);
+    if (isNaN(numericId)) return false;
+    return favorites.includes(numericId);
   };
 
   return {
     favorites,
     toggleFavorite,
     isFavorite,
+    loading: favoritesLoading || toggleLoading,
+    error: favoritesError,
+    refetch,
   };
 };
