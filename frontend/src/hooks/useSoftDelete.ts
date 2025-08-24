@@ -1,0 +1,52 @@
+import { useState, useEffect } from 'react';
+import { storage } from '../utils/storage';
+
+export const useSoftDelete = () => {
+  const [deletedCharacters, setDeletedCharacters] = useState<number[]>([]);
+
+  useEffect(() => {
+    // Cargar personajes eliminados iniciales
+    setDeletedCharacters(storage.getDeletedCharacters());
+
+    // Escuchar cambios en personajes eliminados
+    const handleCharactersChanged = () => {
+      setDeletedCharacters(storage.getDeletedCharacters());
+    };
+
+    window.addEventListener('charactersChanged', handleCharactersChanged);
+    
+    return () => {
+      window.removeEventListener('charactersChanged', handleCharactersChanged);
+    };
+  }, []);
+
+  const softDeleteCharacter = (characterId: number) => {
+    storage.softDeleteCharacter(characterId);
+    setDeletedCharacters(storage.getDeletedCharacters());
+    // Disparar evento para otros componentes
+    window.dispatchEvent(new CustomEvent('charactersChanged'));
+  };
+
+  const restoreCharacter = (characterId: number) => {
+    storage.restoreCharacter(characterId);
+    setDeletedCharacters(storage.getDeletedCharacters());
+    // Disparar evento para otros componentes
+    window.dispatchEvent(new CustomEvent('charactersChanged'));
+  };
+
+  const isCharacterDeleted = (characterId: number): boolean => {
+    return deletedCharacters.includes(characterId);
+  };
+
+  const getActiveCharacters = (allCharacters: any[]): any[] => {
+    return allCharacters.filter(char => !deletedCharacters.includes(char.id));
+  };
+
+  return {
+    deletedCharacters,
+    softDeleteCharacter,
+    restoreCharacter,
+    isCharacterDeleted,
+    getActiveCharacters
+  };
+};

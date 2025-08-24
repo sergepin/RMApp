@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Character } from '../../types/character';
-import { storage } from '../../utils/storage';
+import { useSoftDelete } from '../../hooks/useSoftDelete';
 
 interface DeletedCharactersManagerProps {
   characters: Character[];
@@ -16,15 +16,15 @@ export const DeletedCharactersManager: React.FC<DeletedCharactersManagerProps> =
   onClose
 }) => {
   const [deletedCharacters, setDeletedCharacters] = useState<Character[]>([]);
+  const { deletedCharacters: deletedIds, restoreCharacter } = useSoftDelete();
 
   useEffect(() => {
-    const deletedIds = storage.getDeletedCharacters();
     const deleted = characters.filter(char => deletedIds.includes(char.id));
     setDeletedCharacters(deleted);
-  }, [characters, isOpen]);
+  }, [characters, deletedIds, isOpen]);
 
   const handleRestore = (characterId: number) => {
-    storage.restoreCharacter(characterId);
+    restoreCharacter(characterId);
     onRestore(characterId);
     setDeletedCharacters(prev => prev.filter(char => char.id !== characterId));
   };
@@ -32,11 +32,12 @@ export const DeletedCharactersManager: React.FC<DeletedCharactersManagerProps> =
   const handlePermanentDelete = (characterId: number) => {
     if (window.confirm('Are you sure you want to permanently delete this character? This action cannot be undone.')) {
       // Remove from favorites too
+      const { storage } = require('../../utils/storage');
       const favorites = storage.getFavorites();
       if (favorites.includes(characterId)) {
-        storage.setFavorites(favorites.filter(id => id !== characterId));
+        storage.setFavorites(favorites.filter((id: number) => id !== characterId));
       }
-      storage.restoreCharacter(characterId); // Remove from deleted list
+      restoreCharacter(characterId); // Remove from deleted list
       onRestore(characterId);
       setDeletedCharacters(prev => prev.filter(char => char.id !== characterId));
     }
@@ -45,7 +46,7 @@ export const DeletedCharactersManager: React.FC<DeletedCharactersManagerProps> =
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 backdrop-blur-sm bg-white/30 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 max-h-96 overflow-hidden">
         <div className="p-4 border-b border-gray-200">
           <div className="flex items-center justify-between">

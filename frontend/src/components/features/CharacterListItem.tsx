@@ -1,12 +1,12 @@
 import React from "react";
 import { Character } from "../../types/character";
-import { storage } from "../../utils/storage";
+import { useFavorites } from "../../hooks/useFavorites";
+import { useSoftDelete } from "../../hooks/useSoftDelete";
 import { HiHeart, HiOutlineHeart, HiOutlineTrash } from "react-icons/hi";
 
 interface CharacterListItemProps {
   character: Character;
   isSelected: boolean;
-  isFavorite: boolean;
   onClick: () => void;
   onSoftDelete?: (id: number) => void;
 }
@@ -14,20 +14,24 @@ interface CharacterListItemProps {
 export const CharacterListItem: React.FC<CharacterListItemProps> = ({
   character,
   isSelected,
-  isFavorite,
   onClick,
   onSoftDelete,
 }) => {
+  const { isFavorite, toggleFavorite } = useFavorites();
+  const { softDeleteCharacter } = useSoftDelete();
+
   const handleFavoriteToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
-    storage.toggleFavorite(character.id);
-    window.dispatchEvent(new CustomEvent("favoritesChanged"));
+    toggleFavorite(character.id);
   };
 
   const handleSoftDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
+    softDeleteCharacter(character.id);
     onSoftDelete?.(character.id);
   };
+
+  const isCharacterFavorite = isFavorite(character.id);
 
   return (
     <div
@@ -40,7 +44,7 @@ export const CharacterListItem: React.FC<CharacterListItemProps> = ({
         {/* Avatar con highlight si es favorito */}
         <div
           className={`relative flex-shrink-0 w-10 h-10 rounded-full overflow-hidden ${
-            isFavorite ? "ring-2 ring-white bg-white p-0.5" : ""
+            isCharacterFavorite ? "ring-2 ring-white bg-white p-0.5" : ""
           }`}
         >
           <img
@@ -67,9 +71,9 @@ export const CharacterListItem: React.FC<CharacterListItemProps> = ({
           <button
             onClick={handleFavoriteToggle}
             className="text-lg hover:scale-110 transition-transform"
-            aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+            aria-label={isCharacterFavorite ? "Remove from favorites" : "Add to favorites"}
           >
-            {isFavorite ? (
+            {isCharacterFavorite ? (
               <HiHeart className="w-6 h-6 text-green-500" />
             ) : (
               <HiOutlineHeart className="w-6 h-6 text-gray-400" />

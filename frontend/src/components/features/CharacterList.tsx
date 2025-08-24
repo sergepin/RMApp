@@ -4,7 +4,8 @@ import { CharacterListItem } from './CharacterListItem';
 import { SearchBar } from './SearchBar';
 import { AdvancedFilters } from './AdvancedFilters';
 import { DeletedCharactersManager } from './DeletedCharactersManager';
-import { storage } from '../../utils/storage';
+import { useFavorites } from '../../hooks/useFavorites';
+import { useSoftDelete } from '../../hooks/useSoftDelete';
 import { HiTrash } from 'react-icons/hi';
 
 interface CharacterListProps {
@@ -40,9 +41,12 @@ export const CharacterList: React.FC<CharacterListProps> = ({
     gender: ''
   });
 
+  const { favorites, isFavorite } = useFavorites();
+  const { getActiveCharacters, deletedCharacters } = useSoftDelete();
+
   const filteredAndSortedCharacters = useMemo(() => {
     // ✅ Filtrar personajes eliminados primero
-    let filtered = storage.getActiveCharacters(characters);
+    let filtered = getActiveCharacters ? getActiveCharacters(characters) : characters;
     
     // Filter by search term
     if (searchTerm) {
@@ -76,17 +80,17 @@ export const CharacterList: React.FC<CharacterListProps> = ({
       const comparison = a.name.localeCompare(b.name);
       return sortOrder === 'asc' ? comparison : -comparison;
     });
-  }, [characters, searchTerm, sortOrder, filters]);
+  }, [characters, searchTerm, sortOrder, filters, deletedCharacters]);
 
   const favoriteCharacters = useMemo(() => 
     filteredAndSortedCharacters.filter(char => 
-      storage.isFavorite(char.id)
-    ), [filteredAndSortedCharacters]);
+      isFavorite(char.id)
+    ), [filteredAndSortedCharacters, isFavorite]);
 
   const regularCharacters = useMemo(() => 
     filteredAndSortedCharacters.filter(char => 
-      !storage.isFavorite(char.id)
-    ), [filteredAndSortedCharacters]);
+      !isFavorite(char.id)
+    ), [filteredAndSortedCharacters, isFavorite]);
 
   const handleSortToggle = () => {
     setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
@@ -111,14 +115,14 @@ export const CharacterList: React.FC<CharacterListProps> = ({
     setShowAdvancedFilters(!showAdvancedFilters);
   };
 
+  const { softDeleteCharacter, restoreCharacter } = useSoftDelete();
+
   const handleSoftDelete = (characterId: number) => {
-    // Force re-render
-    window.dispatchEvent(new CustomEvent('charactersChanged'));
+    softDeleteCharacter(characterId);
   };
 
   const handleRestore = (characterId: number) => {
-    // Force re-render
-    window.dispatchEvent(new CustomEvent('charactersChanged'));
+    restoreCharacter(characterId);
   };
 
   if (loading) {
@@ -149,7 +153,7 @@ export const CharacterList: React.FC<CharacterListProps> = ({
       <div className="p-4 border-b border-gray-200">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-gray-800">Rick and Morty list</h1>
-            <button
+          <button
               onClick={() => setShowDeletedManager(true)}
               className="flex items-center gap-2 px-4 py-2 text-sm font-medium
                         bg-red-50 text-red-700 rounded-xl shadow-sm
@@ -159,7 +163,7 @@ export const CharacterList: React.FC<CharacterListProps> = ({
               <span>Deleted</span>
               <span className="ml-1 px-2 py-0.5 text-xs font-semibold
                               bg-red-500 text-white rounded-full">
-                {storage.getDeletedCharacters().length}
+                {deletedCharacters.length}
               </span>
           </button>
         </div>
@@ -200,7 +204,6 @@ export const CharacterList: React.FC<CharacterListProps> = ({
                   key={character.id}
                   character={character}
                   isSelected={selectedCharacterId === character.id}
-                  isFavorite={true}
                   onClick={() => onCharacterSelect(character)}
                   onSoftDelete={handleSoftDelete}
                 />
@@ -221,7 +224,6 @@ export const CharacterList: React.FC<CharacterListProps> = ({
                   key={character.id}
                   character={character}
                   isSelected={selectedCharacterId === character.id}
-                  isFavorite={false}
                   onClick={() => onCharacterSelect(character)}
                   onSoftDelete={handleSoftDelete}
                 />
