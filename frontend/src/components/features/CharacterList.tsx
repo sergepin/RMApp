@@ -45,10 +45,8 @@ export const CharacterList: React.FC<CharacterListProps> = ({
   const { getActiveCharacters, deletedCharacters } = useSoftDelete();
 
   const filteredAndSortedCharacters = useMemo(() => {
-    // ✅ Filtrar personajes eliminados primero
     let filtered = getActiveCharacters ? getActiveCharacters(characters) : characters;
-    
-    // Filter by search term
+
     if (searchTerm) {
       filtered = filtered.filter(character =>
         character.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -56,7 +54,6 @@ export const CharacterList: React.FC<CharacterListProps> = ({
       );
     }
 
-    // Filter by advanced filters
     if (filters.status) {
       filtered = filtered.filter(character => 
         character.status.toLowerCase() === filters.status.toLowerCase()
@@ -75,7 +72,6 @@ export const CharacterList: React.FC<CharacterListProps> = ({
       );
     }
     
-    // Sort by name
     return filtered.sort((a, b) => {
       const comparison = a.name.localeCompare(b.name);
       return sortOrder === 'asc' ? comparison : -comparison;
@@ -149,7 +145,6 @@ export const CharacterList: React.FC<CharacterListProps> = ({
 
   return (
     <div className="h-full flex flex-col">
-      {/* Header */}
       <div className="p-4 border-b border-gray-200">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-gray-800">Rick and Morty list</h1>
@@ -169,7 +164,6 @@ export const CharacterList: React.FC<CharacterListProps> = ({
         </div>
       </div>
 
-      {/* Search Bar */}
       <SearchBar
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
@@ -179,7 +173,6 @@ export const CharacterList: React.FC<CharacterListProps> = ({
         onToggleAdvancedFilters={handleToggleAdvancedFilters}
       />
 
-      {/* Advanced Filters */}
       {showAdvancedFilters && (
         <AdvancedFilters
           filters={filters}
@@ -190,9 +183,7 @@ export const CharacterList: React.FC<CharacterListProps> = ({
         />
       )}
 
-      {/* Character Lists */}
       <div className="flex-1 overflow-y-auto">
-        {/* Starred Characters */}
         {favoriteCharacters.length > 0 && (
           <div className="mb-6">
             <h2 className="px-4 py-2 text-sm font-semibold text-gray-600 uppercase tracking-wide">
@@ -212,7 +203,6 @@ export const CharacterList: React.FC<CharacterListProps> = ({
           </div>
         )}
 
-        {/* Regular Characters */}
         {regularCharacters.length > 0 && (
           <div>
             <h2 className="px-4 py-2 text-sm font-semibold text-gray-600 uppercase tracking-wide">
@@ -232,7 +222,6 @@ export const CharacterList: React.FC<CharacterListProps> = ({
           </div>
         )}
 
-        {/* Empty State */}
         {filteredAndSortedCharacters.length === 0 && (
           <div className="text-center py-12">
             <div className="text-gray-400 text-4xl mb-4">🔍</div>
@@ -246,7 +235,6 @@ export const CharacterList: React.FC<CharacterListProps> = ({
         )}
       </div>
 
-      {/* Deleted Characters Manager */}
       <DeletedCharactersManager
         characters={characters}
         onRestore={handleRestore}

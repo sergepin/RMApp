@@ -1,6 +1,6 @@
 import React from 'react';
 import { Character } from '../../types/character';
-import { storage } from '../../utils/storage';
+import { useFavorites } from '../../hooks/useFavorites';
 import { CommentsSection } from './CommentSection';
 import { HiHeart, HiOutlineHeart } from 'react-icons/hi';
 
@@ -9,12 +9,10 @@ interface CharacterDetailPanelProps {
 }
 
 export const CharacterDetailPanel: React.FC<CharacterDetailPanelProps> = ({ character }) => {
-  const isFavorite = storage.isFavorite(character.id);
+  const { isFavorite, toggleFavorite } = useFavorites();
 
   const handleFavoriteToggle = () => {
-    storage.toggleFavorite(character.id);
-    // Mantengo tu recarga forzada
-    window.location.reload();
+    toggleFavorite(character.id);
   };
 
   const getStatusColor = (status: string) => {
@@ -44,9 +42,9 @@ export const CharacterDetailPanel: React.FC<CharacterDetailPanelProps> = ({ char
         <button
           onClick={handleFavoriteToggle}
           className="absolute -bottom-1 -right-1 p-2 bg-white rounded-full shadow hover:bg-gray-100 transition-colors"
-          aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+          aria-label={isFavorite(character.id) ? 'Remove from favorites' : 'Add to favorites'}
         >
-          {isFavorite ? (
+          {isFavorite(character.id) ? (
             <HiHeart className="w-5 h-5 text-green-500" />
           ) : (
             <HiOutlineHeart className="w-5 h-5 text-gray-400" />

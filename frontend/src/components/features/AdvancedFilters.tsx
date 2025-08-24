@@ -36,7 +36,6 @@ export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
 
   const hasActiveFilters = filters.status || filters.species || filters.gender;
 
-  // Helper: estilo dinámico para cada botón - DESKTOP
   const getButtonClasses = (isActive: boolean) =>
     `px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
       isActive
@@ -44,7 +43,6 @@ export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
         : "bg-white border border-gray-300 text-gray-600 hover:bg-gray-50"
     }`;
 
-  // Helper: estilo dinámico para cada botón - MOBILE
   const getMobileButtonClasses = (isActive: boolean) =>
     `px-4 py-2 rounded-full text-sm font-medium transition-colors ${
       isActive
@@ -54,7 +52,6 @@ export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
 
   return (
     <>
-      {/* DESKTOP VERSION - mantiene el diseño actual */}
       <div className="hidden md:block mt-2 w-full bg-white shadow-lg rounded-xl p-4 border border-gray-100">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-sm font-semibold text-gray-700">Advanced Filters</h3>
@@ -68,7 +65,6 @@ export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
           )}
         </div>
 
-        {/* STATUS - Desktop */}
         <div className="mb-4">
           <p className="text-xs font-medium text-gray-500 mb-2">Status</p>
           <div className="flex gap-2 flex-wrap">
@@ -84,7 +80,6 @@ export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
           </div>
         </div>
 
-        {/* SPECIES - Desktop */}
         <div className="mb-4">
           <p className="text-xs font-medium text-gray-500 mb-2">Species</p>
           <div className="flex gap-2 flex-wrap">
@@ -100,7 +95,6 @@ export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
           </div>
         </div>
 
-        {/* GENDER - Desktop */}
         <div className="mb-4">
           <p className="text-xs font-medium text-gray-500 mb-2">Gender</p>
           <div className="flex gap-2 flex-wrap">
@@ -117,10 +111,8 @@ export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
         </div>
       </div>
 
-      {/* MOBILE VERSION - Modal/Overlay */}
       {showAdvancedFilters && (
         <div className="md:hidden fixed inset-0 z-50 flex items-end">
-          {/* Backdrop con blur */}
           <div 
             className="absolute inset-0"
             style={{ 
@@ -130,9 +122,7 @@ export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
             }}
             onClick={onToggleAdvancedFilters}
           ></div>
-          {/* Modal Content */}
           <div className="bg-white w-full max-h-[80vh] overflow-y-auto rounded-t-2xl animate-slide-up relative z-10">
-            {/* Header con back button */}
             <div className="flex items-center justify-between p-4 border-b border-gray-200">
               <button
                 onClick={onToggleAdvancedFilters}
@@ -141,12 +131,10 @@ export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
                 ← Back
               </button>
               <h2 className="text-lg font-semibold text-gray-800">Filters</h2>
-              <div className="w-12"></div> {/* Spacer para centrar el título */}
+              <div className="w-12"></div>
             </div>
 
-            {/* Content */}
             <div className="p-4">
-              {/* Clear all button */}
               {hasActiveFilters && (
                 <div className="mb-4 text-right">
                   <button
@@ -158,7 +146,6 @@ export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
                 </div>
               )}
 
-              {/* Status Section */}
               <div className="mb-6">
                 <h3 className="text-sm font-medium text-gray-600 mb-3">Status</h3>
                 <div className="flex gap-2 flex-wrap">
@@ -174,7 +161,6 @@ export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
                 </div>
               </div>
 
-              {/* Species Section */}
               <div className="mb-6">
                 <h3 className="text-sm font-medium text-gray-600 mb-3">Species</h3>
                 <div className="flex gap-2 flex-wrap">
@@ -190,7 +176,6 @@ export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
                 </div>
               </div>
 
-              {/* Gender Section */}
               <div className="mb-8">
                 <h3 className="text-sm font-medium text-gray-600 mb-3">Gender</h3>
                 <div className="flex gap-2 flex-wrap">
@@ -206,7 +191,6 @@ export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
                 </div>
               </div>
 
-              {/* Filter Button */}
               <div className="pb-4">
                 <button 
                   className="w-full bg-purple-500 text-white py-3 rounded-lg font-medium hover:bg-purple-600 transition-colors"

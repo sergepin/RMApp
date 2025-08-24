@@ -19,7 +19,6 @@ export const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="flex h-screen">
-        {/* Vista Desktop */}
         <div className="hidden md:flex bg-white border-r border-gray-100 shadow-sm overflow-y-auto">
           {children}
         </div>
@@ -46,7 +45,6 @@ export const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({
           )}
         </div>
 
-        {/* Vista Mobile (una sola columna) */}
         <div className="flex md:hidden w-full">
           {!selectedCharacter ? (
             <div className="w-full bg-white overflow-y-auto">
@@ -54,7 +52,6 @@ export const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({
             </div>
           ) : (
             <div className="w-full bg-white overflow-y-auto p-5">
-              {/* Botón volver */}
               <button 
                 onClick={onBack}
                 className="flex items-center text-primary-500 hover:text-primary-700 mb-5 font-medium"

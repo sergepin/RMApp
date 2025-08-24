@@ -22,10 +22,8 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   return (
     <div className="w-full px-4 py-2">
       <div className="flex items-center bg-white rounded-xl shadow-md px-3 py-2">
-        {/* Icono de búsqueda */}
         <FiSearch className="text-gray-400 w-5 h-5 mr-2" />
 
-        {/* Input */}
         <input
           type="text"
           placeholder="Search or filter results"
@@ -34,7 +32,6 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           className="flex-1 bg-transparent focus:outline-none text-gray-700 placeholder-gray-400"
         />
 
-        {/* Botón de sort */}
         <button
           onClick={onSortToggle}
           className={`ml-2 p-2 rounded-lg transition-colors text-secondary-600 hover:bg-primary-100`}
@@ -47,7 +44,6 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           )}
         </button>
 
-        {/* Botón de filtros avanzados */}
         <button
           onClick={onToggleAdvancedFilters}
           className={`ml-2 p-2 rounded-lg transition-colors ${

@@ -50,7 +50,6 @@ export const CommentsSection: React.FC<CommentsSectionProps> = ({ characterId })
     <div className="mt-8">
       <h3 className="text-xl font-semibold text-gray-800 mb-4">Comments</h3>
       
-      {/* Comment Form */}
       <form onSubmit={handleSubmit} className="mb-6">
         <div className="flex space-x-2">
           <input
@@ -71,7 +70,6 @@ export const CommentsSection: React.FC<CommentsSectionProps> = ({ characterId })
         </div>
       </form>
 
-      {/* Comments List */}
       <div className="space-y-4">
         {comments.length === 0 ? (
           <p className="text-gray-500 text-center py-4">No comments yet. Be the first to comment!</p>

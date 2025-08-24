@@ -29,20 +29,6 @@ export const DeletedCharactersManager: React.FC<DeletedCharactersManagerProps> =
     setDeletedCharacters(prev => prev.filter(char => char.id !== characterId));
   };
 
-  const handlePermanentDelete = (characterId: number) => {
-    if (window.confirm('Are you sure you want to permanently delete this character? This action cannot be undone.')) {
-      // Remove from favorites too
-      const { storage } = require('../../utils/storage');
-      const favorites = storage.getFavorites();
-      if (favorites.includes(characterId)) {
-        storage.setFavorites(favorites.filter((id: number) => id !== characterId));
-      }
-      restoreCharacter(characterId); // Remove from deleted list
-      onRestore(characterId);
-      setDeletedCharacters(prev => prev.filter(char => char.id !== characterId));
-    }
-  };
-
   if (!isOpen) return null;
 
   return (
@@ -94,12 +80,6 @@ export const DeletedCharactersManager: React.FC<DeletedCharactersManagerProps> =
                       className="px-2 py-1 text-xs bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors"
                     >
                       Restore
-                    </button>
-                    <button
-                      onClick={() => handlePermanentDelete(character.id)}
-                      className="px-2 py-1 text-xs bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors"
-                    >
-                      Delete
                     </button>
                   </div>
                 </div>

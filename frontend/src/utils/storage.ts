@@ -25,7 +25,6 @@ export const storage = {
     return storage.getFavorites().includes(characterId);
   },
 
-  // ✅ Nuevas funciones para soft delete
   getDeletedCharacters: (): number[] => {
     try {
       return JSON.parse(localStorage.getItem('deleted_characters') || '[]');
@@ -54,7 +53,6 @@ export const storage = {
     return storage.getDeletedCharacters().includes(characterId);
   },
 
-  // ✅ Función para obtener solo personajes no eliminados
   getActiveCharacters: (allCharacters: any[]): any[] => {
     const deletedIds = storage.getDeletedCharacters();
     return allCharacters.filter(char => !deletedIds.includes(char.id));
