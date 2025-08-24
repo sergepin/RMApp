@@ -56,13 +56,10 @@ class Resolvers {
 
     @timing
     static async comments(_: any, { character_id }: { character_id: number }) {
-        const cacheKey = `comments:${character_id}`;
-        return await getOrSetCache(cacheKey, async () => {
-            return await Comment.findAll({
-                where: { character_id },
-                order: [['created_at', 'DESC']]
-            });
-        }, 300);
+        return await Comment.findAll({
+            where: { character_id },
+            order: [['created_at', 'DESC']]
+        });
     }
 
     @timing

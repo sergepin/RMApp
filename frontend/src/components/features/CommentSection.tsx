@@ -22,14 +22,29 @@ export const CommentsSection: React.FC<CommentsSectionProps> = ({ characterId })
     deleteComment(commentId);
   };
 
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    }).format(date);
+  const formatDate = (dateString: string) => {
+    try {
+      let date: Date;
+      if (/^\d+$/.test(dateString)) {
+        date = new Date(parseInt(dateString));
+      } else {
+        date = new Date(dateString);
+      }
+      
+      if (isNaN(date.getTime())) {
+        return 'Invalid date';
+      }
+      
+      return new Intl.DateTimeFormat('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      }).format(date);
+    } catch (error) {
+      return 'Invalid date';
+    }
   };
 
   return (
@@ -65,14 +80,14 @@ export const CommentsSection: React.FC<CommentsSectionProps> = ({ characterId })
               <div className="flex justify-between items-start">
                 <div className="flex-1">
                   <p className="text-gray-800 mb-2">{comment.text}</p>
-                  <p className="text-xs text-gray-500">{formatDate(new Date(comment.created_at))}</p>
+                  <p className="text-xs text-gray-500">{formatDate(comment.created_at)}</p>
                 </div>
                 <button
                   onClick={() => handleDeleteComment(comment.id)}
-                  className="text-red-500 hover:text-red-700 text-sm ml-2"
+                  className="text-red-500 hover:text-red-700 p-2 hover:bg-red-50 rounded-lg transition-colors"
                   aria-label="Delete comment"
                 >
-                  <HiTrash />
+                  <HiTrash className="w-5 h-5" />
                 </button>
               </div>
             </div>

@@ -32,7 +32,7 @@ export const useComments = (characterId: number) => {
 
   const { data: commentsData, loading: commentsLoading, error: commentsError } = useQuery<CommentsData>(GET_COMMENTS, {
     variables: { character_id: Number(characterId) },
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: 'network-only',
   });
 
   const [addCommentMutation, { loading: addLoading }] = useMutation<AddCommentData>(ADD_COMMENT, {
